@@ -26,7 +26,7 @@ Url.init(
   },
   {
     sequelize,
-    modelName: 'Url',
+    modelName: 'Urls',
     freezeTableName: true,
   }
 );
