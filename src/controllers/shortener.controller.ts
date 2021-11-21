@@ -1,4 +1,4 @@
-import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import { UrlService } from '../services/shortener.service';
 import { ShortenerRequestDto } from '../dtos/shortener-request.dto';
 import { ResponseDto } from '../dtos/response.dto';
@@ -13,13 +13,13 @@ export class UrlShortenerController {
     this.urlService = urlService;
   }
 
-  shorten: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  shorten: RequestHandler = async (req: Request, res: Response) => {
     try {
       const response = await this.urlService.shorten(req.body as ShortenerRequestDto);
       const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.URL_SHORTENED, response);
       return res.status(httpStatus.CREATED).send(responseObj);
-    } catch (e) {
-      next(e);
+    } catch (err) {
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
     }
   };
 }
