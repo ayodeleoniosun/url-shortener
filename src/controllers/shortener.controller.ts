@@ -13,7 +13,7 @@ export class UrlShortenerController {
     this.urlService = urlService;
   }
 
-  encode: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  encode: RequestHandler = async (req: Request, res: Response,next: NextFunction) => {
     try {
       const response = await this.urlService.encode(req.body as ShortenerRequestDto);
       const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.URL_SHORTENED, response);
