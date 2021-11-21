@@ -4,7 +4,8 @@ import sequelize from '../instance';
 
 export class Url extends Model {}
 
-Url.init({
+Url.init(
+  {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,

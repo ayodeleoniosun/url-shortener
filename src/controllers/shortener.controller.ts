@@ -13,20 +13,10 @@ export class UrlShortenerController {
     this.urlService = urlService;
   }
 
-  shorten: RequestHandler = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => {
+  shorten: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const response = await this.urlService.shorten(
-        req.body as ShortenerRequestDto
-      );
-      const responseObj = new ResponseDto(
-        ResponseStatus.SUCCESS,
-        SuccessMessages.URL_SHORTENED,
-        response
-      );
+      const response = await this.urlService.shorten(req.body as ShortenerRequestDto);
+      const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.URL_SHORTENED, response);
       return res.status(httpStatus.CREATED).send(responseObj);
     } catch (e) {
       next(e);

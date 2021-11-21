@@ -13,11 +13,7 @@ export class UrlService {
   private readonly UrlUtility: UrlUtility;
   private readonly redisService: RedisService;
 
-  constructor(
-    urlRepository: IUrlRepository,
-    UrlUtility: UrlUtility,
-    redisService: RedisService
-  ) {
+  constructor(urlRepository: IUrlRepository, UrlUtility: UrlUtility, redisService: RedisService) {
     this.urlRepository = urlRepository;
     this.UrlUtility = UrlUtility;
     this.redisService = redisService;
@@ -28,10 +24,7 @@ export class UrlService {
     const isValidUrl = this.UrlUtility.isValidUrl(original_url);
 
     if (!isValidUrl) {
-      throw new HttpException(
-        ErrorMessages.INVALID_URL,
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+      throw new HttpException(ErrorMessages.INVALID_URL, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     const response = new ShortenerResponseDto();
@@ -58,10 +51,7 @@ export class UrlService {
     const shortCode = this.UrlUtility.generateShortCode(5);
     await this.redisService.set(original_url, shortCode);
 
-    const newUrl = await this.urlRepository.save({
-      short_code: shortCode,
-      original_url: original_url
-    });
+    const newUrl = await this.urlRepository.save({ short_code: shortCode, original_url: original_url });
 
     response.short_code = newUrl.short_code;
     response.original_url = newUrl.original_url;
@@ -74,10 +64,7 @@ export class UrlService {
     try {
       url = await this.urlRepository.getShortCodeByUrl(originalUrl);
     } catch (e) {
-      throw new HttpException(
-        ErrorMessages.URL_RETRIEVAL_FAILED,
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
+      throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return url;

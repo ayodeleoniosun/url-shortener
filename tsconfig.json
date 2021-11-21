@@ -13,7 +13,7 @@
     "alwaysStrict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": false,
-//    "noImplicitReturns": true,
+    //    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "baseUrl": ".",
@@ -21,6 +21,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
+    "esModuleInterop": true
   }
 }
