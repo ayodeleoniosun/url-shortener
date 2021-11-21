@@ -74,17 +74,9 @@ export class UrlService {
     try {
       url = await this.urlRepository.getShortCodeByUrl(originalUrl);
     } catch (e) {
-      console.log(e);
       throw new HttpException(
         ErrorMessages.URL_RETRIEVAL_FAILED,
         HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-
-    if (!url) {
-      throw new HttpException(
-        ErrorMessages.URL_NOT_FOUND,
-        HttpStatus.NOT_FOUND
       );
     }
 
