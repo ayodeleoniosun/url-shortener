@@ -12,6 +12,6 @@ const urlService = new UrlService(urlRepository, urlUtility, redisService);
 const urlShortener = new UrlShortenerController(urlService);
 const router: Router = Router();
 
-router.post('/encode', urlShortener.encode);
+router.post('/shorten', urlShortener.shorten);
 
 export default router;

@@ -7,6 +7,7 @@ import { UrlUtility } from '../utils/helpers/url.utility';
 import { ShortenerResponseDto } from '../dtos/shortener-response.dto';
 import { ShortenerRequestDto } from 'src/dtos/shortener-request.dto';
 import { RedisService } from './redis.service';
+
 export class UrlService {
   private readonly urlRepository: IUrlRepository;
   private readonly UrlUtility: UrlUtility;
@@ -22,7 +23,7 @@ export class UrlService {
     this.redisService = redisService;
   }
 
-  async encode(payload: ShortenerRequestDto): Promise<ShortenerResponseDto> {
+  async shorten(payload: ShortenerRequestDto): Promise<ShortenerResponseDto> {
     const { original_url } = payload;
     const isValidUrl = this.UrlUtility.isValidUrl(original_url);
 
@@ -74,27 +75,6 @@ export class UrlService {
       url = await this.urlRepository.getShortCodeByUrl(originalUrl);
     } catch (e) {
       console.log(e);
-      throw new HttpException(
-        ErrorMessages.URL_RETRIEVAL_FAILED,
-        HttpStatus.INTERNAL_SERVER_ERROR
-      );
-    }
-
-    if (!url) {
-      throw new HttpException(
-        ErrorMessages.URL_NOT_FOUND,
-        HttpStatus.NOT_FOUND
-      );
-    }
-
-    return url;
-  }
-
-  async getUrlByShortCode(shortCode: string): Promise<IUrl> {
-    let url: IUrl;
-    try {
-      url = await this.urlRepository.getUrlByShortCode(shortCode);
-    } catch (e) {
       throw new HttpException(
         ErrorMessages.URL_RETRIEVAL_FAILED,
         HttpStatus.INTERNAL_SERVER_ERROR

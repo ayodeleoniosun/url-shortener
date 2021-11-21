@@ -15,17 +15,6 @@ export class UrlRepository implements IUrlRepository {
     });
   }
 
-  getUrlByShortCode(short_code: string): Promise<IUrl> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const url = await Url.findOne({ where: { short_code } });
-        resolve(url as unknown as IUrl);
-      } catch (e) {
-        reject(e);
-      }
-    });
-  }
-
   getShortCodeByUrl(original_url: string): Promise<IUrl> {
     return new Promise(async (resolve, reject) => {
       try {
