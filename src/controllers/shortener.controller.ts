@@ -19,7 +19,11 @@ export class UrlShortenerController {
       const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.URL_SHORTENED, response);
       return res.status(httpStatus.CREATED).send(responseObj);
     } catch (err) {
-      return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(err);
+      const error = JSON.parse(JSON.stringify(err));
+      return res.status(error.status).send({
+        status: 'error',
+        message: error.message,
+      });
     }
   };
 }

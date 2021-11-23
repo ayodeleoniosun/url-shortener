@@ -24,7 +24,7 @@ export class UrlService {
     const isValidUrl = this.urlUtility.isValidUrl(original_url);
 
     if (!isValidUrl) {
-      throw new HttpException(ErrorMessages.INVALID_URL, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(ErrorMessages.INVALID_URL, HttpStatus.BAD_REQUEST);
     }
 
     //check if url exists in redis
@@ -57,6 +57,10 @@ export class UrlService {
       url = await this.urlRepository.getShortCodeByUrl(originalUrl);
     } catch (e) {
       throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    if (!url) {
+      throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.NOT_FOUND);
     }
 
     return url;
