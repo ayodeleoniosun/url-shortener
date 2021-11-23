@@ -1,6 +1,6 @@
 'use strict';
 import { Model, DataTypes } from 'sequelize';
-import sequelize from '../instance';
+import { sequelize } from '../instance';
 
 export class Url extends Model {}
 

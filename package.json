@@ -4,9 +4,10 @@
   "description": "A url shortener app",
   "scripts": {
     "test": "NODE_ENV=test jest --forceExit --coverage --verbose --colors",
-    "start": "npm run build && node dist/index.js",
+    "start": "npm run build && node dist/app.js",
     "migrate": "sequelize db:migrate",
-    "dev": "nodemon",
+    "watch-ts": "tsc -w",
+    "dev": "concurrently \"npm run watch-ts\" \"nodemon dist/app.js\"",
     "build": "rimraf ./build && tsc"
   },
   "jest": {
@@ -51,6 +52,7 @@
     "@types/jest": "^27.0.1",
     "@types/node": "^15.0.1",
     "@types/sequelize": "^4.28.9",
+    "concurrently": "^6.4.0",
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^6.13.0",
     "eslint-plugin-prettier": "^3.1.4",

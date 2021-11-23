@@ -2,10 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import ShortenerRoute from './src/routes/shortener.route';
-import sequelize from './db/instance';
+import { init } from './db/instance';
 
 const app: express.Express = express();
-sequelize.sync();
+init();
 
 app.use(cors());
 app.use(express.json());
