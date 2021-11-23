@@ -59,7 +59,7 @@ For development, you will only need Node.js, a node global package, npm, MySQL a
 ## Run app
 
 - Run `npm start` to start the app (app runs on PORT 3000 by default).
-- Run `nodemon dev` to start the app in development mode.
+- Run `npm run dev` to start the app in development mode.
 - Run `npm test` to run test.
 - To test the api, kindly visit [Here](https://documenter.getpostman.com/view/18037473/UVJWqKw3)
 
