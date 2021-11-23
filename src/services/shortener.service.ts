@@ -59,10 +59,22 @@ export class UrlService {
       throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    return url;
+  }
+
+  async getUrlByShortCode(shortCode: string): Promise<ShortenerResponseDto> {
+    let url: IUrl;
+
+    try {
+      url = await this.urlRepository.getUrlByShortCode(shortCode);
+    } catch (e) {
+      throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     if (!url) {
       throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.NOT_FOUND);
     }
 
-    return url;
+    return new ShortenerResponseDto(url);
   }
 }

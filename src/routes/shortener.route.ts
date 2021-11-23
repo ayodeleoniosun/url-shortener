@@ -13,5 +13,6 @@ const urlShortener = new UrlShortenerController(urlService);
 const router: Router = Router();
 
 router.post('/shorten', urlShortener.shorten);
+router.get('/:short_code', urlShortener.get);
 
 export default router;
