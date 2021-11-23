@@ -10,52 +10,44 @@ import { RedisService } from './redis.service';
 
 export class UrlService {
   private readonly urlRepository: IUrlRepository;
-  private readonly UrlUtility: UrlUtility;
+  private readonly urlUtility: UrlUtility;
   private readonly redisService: RedisService;
 
-  constructor(urlRepository: IUrlRepository, UrlUtility: UrlUtility, redisService: RedisService) {
+  constructor(urlRepository: IUrlRepository, urlUtility: UrlUtility, redisService: RedisService) {
     this.urlRepository = urlRepository;
-    this.UrlUtility = UrlUtility;
+    this.urlUtility = urlUtility;
     this.redisService = redisService;
   }
 
   async shorten(payload: ShortenerRequestDto): Promise<ShortenerResponseDto> {
     const { original_url } = payload;
-    const isValidUrl = this.UrlUtility.isValidUrl(original_url);
+    const isValidUrl = this.urlUtility.isValidUrl(original_url);
 
     if (!isValidUrl) {
       throw new HttpException(ErrorMessages.INVALID_URL, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    const response = new ShortenerResponseDto();
-
     //check if url exists in redis
-    const shortUrl = await this.redisService.get(original_url);
+    const short_code = await this.redisService.get(original_url);
 
-    if (shortUrl) {
-      response.short_code = shortUrl;
-      response.original_url = original_url;
-      return response;
+    if (short_code) {
+      return new ShortenerResponseDto({ short_code, original_url });
     }
 
-    //if not foumd in redis, check in db
+    //if not found in redis, check in db
     const url = await this.getShortCodeByUrl(original_url);
 
     if (url) {
-      response.short_code = url.short_code;
-      response.original_url = url.original_url;
-      return response;
+      return new ShortenerResponseDto(url);
     }
 
     //else, insert new shortened url in both db and redis
-    const shortCode = this.UrlUtility.generateShortCode(5);
+    const shortCode = this.urlUtility.generateShortCode(5);
     await this.redisService.set(original_url, shortCode);
 
     const newUrl = await this.urlRepository.save({ short_code: shortCode, original_url: original_url });
 
-    response.short_code = newUrl.short_code;
-    response.original_url = newUrl.original_url;
-    return response;
+    return new ShortenerResponseDto(newUrl);
   }
 
   async getShortCodeByUrl(originalUrl: string): Promise<IUrl> {
