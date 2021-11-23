@@ -5,11 +5,14 @@ import { ResponseStatus } from '../../src/dtos/response-enum';
 import { SuccessMessages } from '../../src/constants/success-messages';
 import { ErrorMessages } from '../../src/constants/error-messages';
 import { Url } from '../../db/models/url';
+import { RedisService } from '../../src/services/redis.service';
 
-let original_url: string = 'http://www.test.com';
+let original_url: string = 'http://www.tester.com';
+let redisService: RedisService = new RedisService();
 
 afterAll(async () => {
   await Url.destroy({ where: { original_url } });
+  redisService.remove(original_url);
 });
 
 describe('/shortener', () => {
@@ -52,7 +55,6 @@ describe('/visit', () => {
           .set('Accept', 'application/json')
           .then(async (res) => {
             const response = JSON.parse(res.text);
-            console.log(response);
             expect(res.statusCode).toBe(HttpStatus.OK);
             expect(response.status).toBe(ResponseStatus.SUCCESS);
             expect(response.message).toBeDefined();
@@ -68,7 +70,6 @@ describe('/visit', () => {
       .set('Accept', 'application/json')
       .then(async (res) => {
         const response = JSON.parse(res.text);
-        console.log(response);
         expect(res.statusCode).toBe(HttpStatus.NOT_FOUND);
         expect(response.status).toBe(ResponseStatus.ERROR);
         expect(response.message).toBeDefined();

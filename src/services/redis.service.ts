@@ -27,4 +27,13 @@ export class RedisService {
       });
     });
   }
+
+  remove(key: string): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.client.del(key, (err, value) => {
+        if (err) reject(err);
+        resolve(value);
+      });
+    });
+  }
 }
