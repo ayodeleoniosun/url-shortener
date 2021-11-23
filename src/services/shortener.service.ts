@@ -56,7 +56,7 @@ export class UrlService {
     try {
       url = await this.urlRepository.getShortCodeByUrl(originalUrl);
     } catch (e) {
-      throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(ErrorMessages.URL_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     return url;
@@ -68,11 +68,11 @@ export class UrlService {
     try {
       url = await this.urlRepository.getUrlByShortCode(shortCode);
     } catch (e) {
-      throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(ErrorMessages.URL_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     if (!url) {
-      throw new HttpException(ErrorMessages.URL_RETRIEVAL_FAILED, HttpStatus.NOT_FOUND);
+      throw new HttpException(ErrorMessages.URL_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
     return new ShortenerResponseDto(url);
