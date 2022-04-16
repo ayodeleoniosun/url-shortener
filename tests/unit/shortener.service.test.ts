@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../../app';
+import app from '../../src/app';
 import { UrlRepository } from '../../src/repositories/url.repository';
 import { UrlService } from '../../src/services/shortener.service';
 import { UrlUtility } from '../../src/utils/helpers/url.utility';
@@ -7,11 +7,11 @@ import { RedisService } from '../../src/services/redis.service';
 import { ShortenerRequestDto } from '../../src/dtos/shortener-request.dto';
 import { ShortenerResponseDto } from '../../src/dtos/shortener-response.dto';
 import HttpException from '../../src/utils/exceptions/http.exceptions';
-import { Url } from '../../db/models/url';
-import { ErrorMessages } from '../../src/constants/error-messages';
+import Url from '../../src/models/url';
+import { ErrorMessages } from '../../src/enums/error-messages';
 import httpStatus from 'http-status';
 
-let original_url: string = 'http://www.testing.com';
+const original_url = 'http://www.testing.com';
 let urlService: UrlService;
 let redisService: RedisService;
 let shortCode: string;
@@ -29,7 +29,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await Url.destroy({ where: { original_url } });
+  await Url.remove({ where: { original_url } });
   redisService.remove(original_url);
 });
 

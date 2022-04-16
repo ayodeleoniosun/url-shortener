@@ -1,6 +1,6 @@
 export class UrlUtility {
   isValidUrl(url: string): boolean {
-    const pattern: RegExp = new RegExp(
+    const pattern = new RegExp(
       '^(https?:\\/\\/)?' + // protocol
         '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
         '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
@@ -13,7 +13,7 @@ export class UrlUtility {
   }
 
   generateShortCode(length: number): string {
-    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let shortCode = '';
 
     for (let i = 0; i < length; i++) {

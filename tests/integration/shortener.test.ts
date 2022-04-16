@@ -1,17 +1,17 @@
 import request from 'supertest';
-import app from '../../app';
+import app from '../../src/app';
 import * as HttpStatus from 'http-status';
-import { ResponseStatus } from '../../src/dtos/response-enum';
-import { SuccessMessages } from '../../src/constants/success-messages';
-import { ErrorMessages } from '../../src/constants/error-messages';
-import { Url } from '../../db/models/url';
+import { ResponseStatus } from '../../src/dtos/response-status';
+import { SuccessMessages } from '../../src/enums/success-messages';
+import { ErrorMessages } from '../../src/enums/error-messages';
+import Url from '../../src/models/url';
 import { RedisService } from '../../src/services/redis.service';
 
-let original_url: string = 'http://www.tester.com';
-let redisService: RedisService = new RedisService();
+const original_url = 'http://www.tester.com';
+const redisService: RedisService = new RedisService();
 
 afterAll(async () => {
-  await Url.destroy({ where: { original_url } });
+  await Url.remove({ where: { original_url } });
   redisService.remove(original_url);
 });
 

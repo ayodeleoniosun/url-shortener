@@ -1,12 +1,12 @@
-import { Url } from '../../db/models/url';
-import { IUrl } from '../interfaces/url.interface';
-import { IUrlRepository } from './interfaces/url.repository.interface';
+import Url from '../models/url';
+import { IUrl } from '../interfaces/url';
+import { UrlInterface } from '../interfaces/url.interface';
 
-export class UrlRepository implements IUrlRepository {
+export class UrlRepository implements UrlInterface {
   save(url: IUrl): Promise<IUrl> {
     return new Promise(async (resolve, reject) => {
       try {
-        const newUrl = Url.build({ ...url });
+        const newUrl = new Url(url);
         await newUrl.save();
         resolve(newUrl as unknown as IUrl);
       } catch (e) {
@@ -18,7 +18,7 @@ export class UrlRepository implements IUrlRepository {
   getShortCodeByUrl(original_url: string): Promise<IUrl> {
     return new Promise(async (resolve, reject) => {
       try {
-        const url = await Url.findOne({ where: { original_url } });
+        const url = await Url.findOne({ original_url });
         resolve(url as unknown as IUrl);
       } catch (e) {
         reject(e);
@@ -29,7 +29,7 @@ export class UrlRepository implements IUrlRepository {
   getUrlByShortCode(short_code: string): Promise<IUrl> {
     return new Promise(async (resolve, reject) => {
       try {
-        const url = await Url.findOne({ where: { short_code } });
+        const url = await Url.findOne({ short_code });
         resolve(url as unknown as IUrl);
       } catch (e) {
         reject(e);

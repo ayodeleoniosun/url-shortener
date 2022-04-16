@@ -1,10 +1,10 @@
-import { IUrl } from '../../src/interfaces/url.interface';
+import { IUrl } from '../interfaces/url';
 import 'dotenv/config';
 
 export class ShortenerResponseDto {
-  public short_code: string;
-  public original_url: string;
-  public short_url: string;
+  short_code: string;
+  original_url: string;
+  short_url: string;
 
   constructor(url: IUrl) {
     this.short_code = url.short_code;

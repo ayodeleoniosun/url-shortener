@@ -2,8 +2,8 @@ import { Request, RequestHandler, Response } from 'express';
 import { UrlService } from '../services/shortener.service';
 import { ShortenerRequestDto } from '../dtos/shortener-request.dto';
 import { ResponseDto } from '../dtos/response.dto';
-import { ResponseStatus } from '../dtos/response-enum';
-import { SuccessMessages } from '../constants/success-messages';
+import { ResponseStatus } from '../dtos/response-status';
+import { SuccessMessages } from '../enums/success-messages';
 import httpStatus from 'http-status';
 
 export class UrlShortenerController {
@@ -20,10 +20,8 @@ export class UrlShortenerController {
       return res.status(httpStatus.CREATED).send(responseObj);
     } catch (err) {
       const error = JSON.parse(JSON.stringify(err));
-      return res.status(error.status).send({
-        status: 'error',
-        message: error.message,
-      });
+      const errorObj = new ResponseDto(ResponseStatus.ERROR, error.message);
+      return res.status(error.status).send(errorObj);
     }
   };
 
@@ -35,10 +33,8 @@ export class UrlShortenerController {
       return res.status(httpStatus.OK).send(responseObj);
     } catch (err) {
       const error = JSON.parse(JSON.stringify(err));
-      return res.status(error.status).send({
-        status: 'error',
-        message: error.message,
-      });
+      const errorObj = new ResponseDto(ResponseStatus.ERROR, error.message);
+      return res.status(error.status).send(errorObj);
     }
   };
 }

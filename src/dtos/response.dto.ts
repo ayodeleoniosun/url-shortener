@@ -1,4 +1,4 @@
-import { ResponseStatus } from './response-enum';
+import { ResponseStatus } from './response-status';
 
 export class ResponseDto {
   status: string;

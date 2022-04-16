@@ -1,6 +1,6 @@
-import { IUrlRepository } from '../repositories/interfaces/url.repository.interface';
-import { IUrl } from '../interfaces/url.interface';
-import { ErrorMessages } from '../constants/error-messages';
+import { UrlRepository } from '../repositories/url.repository';
+import { IUrl } from '../interfaces/url';
+import { ErrorMessages } from '../enums/error-messages';
 import HttpStatus from 'http-status';
 import HttpException from '../utils/exceptions/http.exceptions';
 import { UrlUtility } from '../utils/helpers/url.utility';
@@ -9,11 +9,11 @@ import { ShortenerRequestDto } from 'src/dtos/shortener-request.dto';
 import { RedisService } from './redis.service';
 
 export class UrlService {
-  private readonly urlRepository: IUrlRepository;
+  private readonly urlRepository: UrlRepository;
   private readonly urlUtility: UrlUtility;
   private readonly redisService: RedisService;
 
-  constructor(urlRepository: IUrlRepository, urlUtility: UrlUtility, redisService: RedisService) {
+  constructor(urlRepository: UrlRepository, urlUtility: UrlUtility, redisService: RedisService) {
     this.urlRepository = urlRepository;
     this.urlUtility = urlUtility;
     this.redisService = redisService;
@@ -21,6 +21,7 @@ export class UrlService {
 
   async shorten(payload: ShortenerRequestDto): Promise<ShortenerResponseDto> {
     const { original_url } = payload;
+
     const isValidUrl = this.urlUtility.isValidUrl(original_url);
 
     if (!isValidUrl) {
@@ -34,14 +35,14 @@ export class UrlService {
       return new ShortenerResponseDto({ short_code, original_url });
     }
 
-    //if not found in redis, check in db
+    //if not found in redis, check in database
     const url = await this.getShortCodeByUrl(original_url);
 
     if (url) {
       return new ShortenerResponseDto(url);
     }
 
-    //else, insert new shortened url in both db and redis
+    //else, insert new shortened url in both database and redis
     const shortCode = this.urlUtility.generateShortCode(5);
     await this.redisService.set(original_url, shortCode);
 
