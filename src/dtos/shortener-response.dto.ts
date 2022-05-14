@@ -1,4 +1,4 @@
-import { IUrl } from '../interfaces/url';
+import { IUrl } from '../interfaces/url/url';
 import 'dotenv/config';
 
 export class ShortenerResponseDto {

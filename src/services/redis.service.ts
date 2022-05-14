@@ -8,32 +8,19 @@ export class RedisService {
     this.client = redis.createClient(process.env.REDIS_URL);
   }
 
-  set(key: string, value: any): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      try {
-        this.client.set(key, value);
-        resolve(true);
-      } catch (e) {
-        reject(e);
-      }
+  async set(key: string, value: any): Promise<boolean> {
+    return await this.client.set(key, value);
+  }
+
+  async get(key: string): Promise<any> {
+    await this.client.get(key, (err, value) => {
+      return value;
     });
   }
 
-  get(key: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.client.get(key, (err, value) => {
-        if (err) reject(err);
-        resolve(value);
-      });
-    });
-  }
-
-  remove(key: string): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.client.del(key, (err, value) => {
-        if (err) reject(err);
-        resolve(value);
-      });
+  async remove(key: string): Promise<any> {
+    await this.client.del(key, (err, value) => {
+      return value;
     });
   }
 }

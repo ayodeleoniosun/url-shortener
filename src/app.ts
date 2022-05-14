@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
-import ShortenerRoute from './routes/index.route';
+import ShortenerRoute from './routes/shortener.route';
+import StatisticsRoute from './routes/statistics.route';
 import databaseConnection from './database.connection';
 
 const app: express.Express = express();
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/api/v1/', ShortenerRoute);
+app.use('/api/v1/', StatisticsRoute);
 app.set('port', process.env.APP_PORT || 3000);
 
 app.get('*', (req, res) =>

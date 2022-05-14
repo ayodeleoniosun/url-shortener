@@ -35,6 +35,7 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "geoip-lite": "^1.4.5",
     "http-status": "^1.5.0",
     "mongoose": "^6.2.10",
     "mysql2": "^2.2.5",
@@ -53,8 +54,10 @@
     "@types/jest": "^27.0.1",
     "@types/node": "^15.0.1",
     "@types/sequelize": "^4.28.9",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
     "concurrently": "^6.4.0",
-    "eslint": "^7.32.0",
+    "eslint": "^8.1.0",
     "eslint-config-prettier": "^6.13.0",
     "eslint-plugin-prettier": "^3.1.4",
     "jest": "^27.0.7",
@@ -64,9 +67,6 @@
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.3",
     "ts-node": "^9.1.1",
-    "typescript": "^4.5.2",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "eslint": "^8.1.0"
+    "typescript": "^4.5.2"
   }
 }

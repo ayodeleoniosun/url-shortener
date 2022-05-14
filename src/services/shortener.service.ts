@@ -1,20 +1,30 @@
 import { UrlRepository } from '../repositories/url.repository';
-import { IUrl } from '../interfaces/url';
+import { VisitorRepository } from '../repositories/visitor.repository';
+import { IUrl } from '../interfaces/url/url';
 import { ErrorMessages } from '../enums/error-messages';
 import HttpStatus from 'http-status';
 import HttpException from '../utils/exceptions/http.exceptions';
 import { UrlUtility } from '../utils/helpers/url.utility';
 import { ShortenerResponseDto } from '../dtos/shortener-response.dto';
 import { ShortenerRequestDto } from 'src/dtos/shortener-request.dto';
+import { VisitorResponseDto } from '../dtos/visitor-response.dto';
 import { RedisService } from './redis.service';
+import geoip from 'geoip-lite';
 
 export class UrlService {
   private readonly urlRepository: UrlRepository;
+  private readonly visitorRepository: VisitorRepository;
   private readonly urlUtility: UrlUtility;
   private readonly redisService: RedisService;
 
-  constructor(urlRepository: UrlRepository, urlUtility: UrlUtility, redisService: RedisService) {
+  constructor(
+    urlRepository: UrlRepository,
+    visitorRepository: VisitorRepository,
+    urlUtility: UrlUtility,
+    redisService: RedisService
+  ) {
     this.urlRepository = urlRepository;
+    this.visitorRepository = visitorRepository;
     this.urlUtility = urlUtility;
     this.redisService = redisService;
   }
@@ -46,7 +56,10 @@ export class UrlService {
     const shortCode = this.urlUtility.generateShortCode(5);
     await this.redisService.set(original_url, shortCode);
 
-    const newUrl = await this.urlRepository.save({ short_code: shortCode, original_url: original_url });
+    const newUrl = await this.urlRepository.save({
+      short_code: shortCode,
+      original_url: original_url,
+    });
 
     return new ShortenerResponseDto(newUrl);
   }
@@ -63,7 +76,7 @@ export class UrlService {
     return url;
   }
 
-  async getUrlByShortCode(shortCode: string): Promise<ShortenerResponseDto> {
+  async getUrlByShortCode(shortCode: string, ipAddress: string): Promise<ShortenerResponseDto> {
     let url: IUrl;
 
     try {
@@ -76,6 +89,28 @@ export class UrlService {
       throw new HttpException(ErrorMessages.URL_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
+    await this.saveVisitorInfo(url, ipAddress);
+
     return new ShortenerResponseDto(url);
+  }
+
+  async saveVisitorInfo(url, ipAddress: string): Promise<any> {
+    try {
+      const info = await geoip.lookup(ipAddress);
+
+      if (info) {
+        const newVisitor = await this.visitorRepository.save({
+          url_id: url._id,
+          ip_address: ipAddress,
+          city: info.city,
+          state: info.region,
+          country: info.country,
+        });
+
+        return new VisitorResponseDto(newVisitor);
+      }
+    } catch (e) {
+      throw new HttpException(ErrorMessages.VISITOR_NOT_CREATED, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

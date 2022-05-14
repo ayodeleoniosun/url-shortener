@@ -10,6 +10,7 @@ import HttpException from '../../src/utils/exceptions/http.exceptions';
 import Url from '../../src/models/url';
 import { ErrorMessages } from '../../src/enums/error-messages';
 import httpStatus from 'http-status';
+import { VisitorRepository } from '../../src/repositories/visitor.repository';
 
 const original_url = 'http://www.testing.com';
 let urlService: UrlService;
@@ -18,9 +19,10 @@ let shortCode: string;
 
 beforeAll(async () => {
   const urlRepository = new UrlRepository();
+  const visitorRepository = new VisitorRepository();
   const urlUtility = new UrlUtility();
   redisService = new RedisService();
-  urlService = new UrlService(urlRepository, urlUtility, redisService);
+  urlService = new UrlService(urlRepository, visitorRepository, urlUtility, redisService);
 
   const payload = { original_url };
   const res = await request(app).post('/api/shorten').send(payload).set('Accept', 'application/json');
