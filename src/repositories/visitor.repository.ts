@@ -25,7 +25,10 @@ export class VisitorRepository implements VisitorInterface {
       this.dates.endOfCurrentMonth
     );
 
-    return { todayVisits, currentWeekVisits, currentMonthVisits };
+    const topCountryVisits = await this.filterBy(url_id, 'country');
+    const topCityVisits = await this.filterBy(url_id, 'city');
+
+    return { todayVisits, currentWeekVisits, currentMonthVisits, topCountryVisits, topCityVisits };
   }
 
   async getVisitorInfo(visitor_id: string): Promise<IVisitor> {
@@ -34,5 +37,25 @@ export class VisitorRepository implements VisitorInterface {
 
   async filterDates(urlId: string, startDate: string, endDate: string): Promise<object[]> {
     return await Visitor.find({ url_id: urlId, createdAt: { $gte: startDate, $lte: endDate} });
+  }
+
+  async filterBy(urlId: string, type: string): Promise<object[]> {
+    return await Visitor.aggregate([
+      {
+        $match: { url_id: urlId },
+      },
+      {
+        $group: {
+          _id: `$${type}`,
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { count: -1 },
+      },
+      {
+        $limit: 10,
+      },
+    ]);
   }
 }
