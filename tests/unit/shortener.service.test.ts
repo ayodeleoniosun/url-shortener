@@ -25,7 +25,7 @@ beforeAll(async () => {
   urlService = new UrlService(urlRepository, visitorRepository, urlUtility, redisService);
 
   const payload = { original_url };
-  const res = await request(app).post('/api/shorten').send(payload).set('Accept', 'application/json');
+  const res = await request(app).post('/api/v1/shorten').send(payload).set('Accept', 'application/json');
   const response = JSON.parse(res.text);
   shortCode = response.data.short_code;
 });
@@ -36,7 +36,7 @@ afterAll(async () => {
 });
 
 describe('/shortener', () => {
-  it('should be succesful if valid original url is supplied', async () => {
+  it('should be successful if valid original url is supplied', async () => {
     const payload: ShortenerRequestDto = { original_url };
     const response = expect(urlService.shorten(payload));
     response.resolves.toBeInstanceOf(ShortenerResponseDto);
@@ -55,16 +55,23 @@ describe('/shortener', () => {
 });
 
 describe('/visit', () => {
-  it('should be succesful if short code exists', async () => {
-    const response = expect(urlService.getUrlByShortCode(shortCode));
+  it('should be successful if short code exists', async () => {
+    const req = {
+      params: { short_code: shortCode },
+    };
+
+    const response = expect(urlService.getUrlByShortCode(req));
     response.resolves.toBeInstanceOf(ShortenerResponseDto);
     response.resolves.toHaveProperty('short_code', shortCode);
     response.resolves.toHaveProperty('original_url', original_url);
   });
 
   it('should throw a not found exception if short code does not exists', async () => {
-    const shortCode = 'sample_short_code';
-    const response = expect(urlService.getUrlByShortCode(shortCode));
+    const req = {
+      params: { short_code: '' },
+    };
+
+    const response = expect(urlService.getUrlByShortCode(req));
     response.rejects.toBeInstanceOf(HttpException);
     response.rejects.toHaveProperty('status', httpStatus.NOT_FOUND);
     response.rejects.toHaveProperty('message', ErrorMessages.URL_NOT_FOUND);

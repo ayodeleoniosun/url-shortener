@@ -9,6 +9,7 @@ import { RedisService } from '../../src/services/redis.service';
 
 const original_url = 'http://www.tester.com';
 const redisService: RedisService = new RedisService();
+const baseUrl = '/api/v1';
 
 afterAll(async () => {
   await Url.remove({ where: { original_url } });
@@ -18,7 +19,7 @@ afterAll(async () => {
 describe('/shortener', () => {
   it('should return 201 if valid original url is supplied', async () => {
     const payload = { original_url };
-    const res = await request(app).post('/api/shorten').send(payload).set('Accept', 'application/json');
+    const res = await request(app).post(`${baseUrl}/shorten`).send(payload).set('Accept', 'application/json');
     expect(res.status).toBe(HttpStatus.CREATED);
     expect(res.body.status).toBe(ResponseStatus.SUCCESS);
     expect(res.body.message).toBeDefined();
@@ -28,7 +29,7 @@ describe('/shortener', () => {
   it('should return 400 if invalid url is supplied', async () => {
     const original_url = 'sample invalid url';
     const payload = { original_url };
-    const res = await request(app).post('/api/shorten').send(payload).set('Accept', 'application/json');
+    const res = await request(app).post(`${baseUrl}/shorten`).send(payload).set('Accept', 'application/json');
     expect(res.status).toBe(HttpStatus.BAD_REQUEST);
     expect(res.body.message).toBeDefined();
     expect(res.body.message).toBe(ErrorMessages.INVALID_URL);
@@ -39,7 +40,7 @@ describe('/visit', () => {
   it('should return 200 if the short code exist', async () => {
     const payload = { original_url };
     await request(app)
-      .post('/api/shorten')
+      .post(`${baseUrl}/shorten`)
       .send(payload)
       .set('Accept', 'application/json')
       .then(async (res) => {
@@ -51,7 +52,7 @@ describe('/visit', () => {
 
         //visit short url
         await request(app)
-          .get(`/api/${response.data.short_code}`)
+          .get(`${baseUrl}/${response.data.short_code}`)
           .set('Accept', 'application/json')
           .then(async (res) => {
             const response = JSON.parse(res.text);
@@ -66,7 +67,7 @@ describe('/visit', () => {
   it('should return 404 if the short code does not exist', async () => {
     const shortCode = 'test_code';
     await request(app)
-      .get(`/api/${shortCode}`)
+      .get(`${baseUrl}/${shortCode}`)
       .set('Accept', 'application/json')
       .then(async (res) => {
         const response = JSON.parse(res.text);
