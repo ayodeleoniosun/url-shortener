@@ -14,22 +14,25 @@ export class UrlShortenerController {
   }
 
   shorten: RequestHandler = async (req: Request, res: Response) => {
-    try {
-      const response = await this.urlService.shorten(req.body as ShortenerRequestDto);
-      const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.URL_SHORTENED, response);
-      return res.status(httpStatus.CREATED).send(responseObj);
-    } catch (err) {
-      const error = JSON.parse(JSON.stringify(err));
-      const errorObj = new ResponseDto(ResponseStatus.ERROR, error.message);
-      return res.status(error.status).send(errorObj);
-    }
+    return this.request('shorten', SuccessMessages.URL_SHORTENED, httpStatus.CREATED, req, res);
   };
 
   get: RequestHandler = async (req: Request, res: Response) => {
+    return this.request('get', SuccessMessages.URL_RETRIEVED, httpStatus.OK, req, res);
+  };
+
+  request = async (type: string, successMessage: string, httpStatus: number, req: Request, res: Response) => {
     try {
-      const response = await this.urlService.getUrlByShortCode(req);
-      const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.URL_RETRIEVED, response);
-      return res.status(httpStatus.OK).send(responseObj);
+      let response;
+
+      if (type === 'shorten') {
+        response = await this.urlService.shorten(req.body as ShortenerRequestDto);
+      } else if (type === 'get') {
+        response = await this.urlService.getUrlByShortCode(req);
+      }
+
+      const responseObj = new ResponseDto(ResponseStatus.SUCCESS, successMessage, response);
+      return res.status(httpStatus).send(responseObj);
     } catch (err) {
       const error = JSON.parse(JSON.stringify(err));
       const errorObj = new ResponseDto(ResponseStatus.ERROR, error.message);
