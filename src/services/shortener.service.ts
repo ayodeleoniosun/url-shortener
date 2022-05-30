@@ -38,22 +38,20 @@ export class UrlService {
       throw new HttpException(ErrorMessages.INVALID_URL, HttpStatus.BAD_REQUEST);
     }
 
-    //check if url exists in redis
     const short_code = await this.redisService.get(original_url);
 
     if (short_code) {
       return new ShortenerResponseDto({ short_code, original_url });
     }
 
-    //if not found in redis, check in database
     const url = await this.getShortCodeByUrl(original_url);
 
     if (url) {
       return new ShortenerResponseDto(url);
     }
 
-    //else, insert new shortened url in both database and redis
     const shortCode = this.urlUtility.generateShortCode(5);
+
     await this.redisService.set(original_url, shortCode);
 
     const newUrl = await this.urlRepository.save({
@@ -76,11 +74,12 @@ export class UrlService {
     return url;
   }
 
-  async getUrlByShortCode(shortCode: string, ipAddress: string): Promise<ShortenerResponseDto> {
+  async getUrlByShortCode(req): Promise<ShortenerResponseDto> {
     let url: IUrl;
+    const { short_code } = req.params;
 
     try {
-      url = await this.urlRepository.getUrlByShortCode(shortCode);
+      url = await this.urlRepository.getUrlByShortCode(short_code);
     } catch (e) {
       throw new HttpException(ErrorMessages.URL_NOT_FOUND, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -89,6 +88,7 @@ export class UrlService {
       throw new HttpException(ErrorMessages.URL_NOT_FOUND, HttpStatus.NOT_FOUND);
     }
 
+    const ipAddress = '155.94.217.32';
     await this.saveVisitorInfo(url, ipAddress);
 
     return new ShortenerResponseDto(url);

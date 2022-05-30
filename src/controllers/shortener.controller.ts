@@ -27,8 +27,7 @@ export class UrlShortenerController {
 
   get: RequestHandler = async (req: Request, res: Response) => {
     try {
-      const { short_code } = req.params;
-      const response = await this.urlService.getUrlByShortCode(short_code, req.ip);
+      const response = await this.urlService.getUrlByShortCode(req);
       const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.URL_RETRIEVED, response);
       return res.status(httpStatus.OK).send(responseObj);
     } catch (err) {

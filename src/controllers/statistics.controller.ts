@@ -16,8 +16,7 @@ export class StatisticsController {
     try {
       const { short_code } = req.params;
       const response = await this.statisticsService.statistics(short_code);
-      console.log(response);
-      const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.URL_RETRIEVED, response);
+      const responseObj = new ResponseDto(ResponseStatus.SUCCESS, SuccessMessages.STATISTICS_RETRIEVED, response);
       return res.status(httpStatus.OK).send(responseObj);
     } catch (err) {
       const error = JSON.parse(JSON.stringify(err));

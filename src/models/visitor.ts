@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import moment from "moment";
 
 const schema = new mongoose.Schema({
   url_id: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Url' },
@@ -6,8 +7,8 @@ const schema = new mongoose.Schema({
   city: { type: String, lowerCase: true },
   state: { type: String, lowerCase: true },
   country: { type: String, required: true, lowerCase: true },
-  created_at: { type: String, default: Date.now() },
-  updated_at: { type: String, default: Date.now() },
+  createdAt: { type: Date, default: moment.utc().toISOString() },
+  updatedAt: { type: Date, default: moment.utc().toISOString() }
 });
 
 const Visitor = mongoose.model('visitor', schema);
